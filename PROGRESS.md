@@ -164,7 +164,7 @@
 
 ### Phase 2: Agent框架开发 (Week 4-8) 【简化压缩】
 
-> 💡 **架构简化**: Master Agent负责任务分解和结果汇总，子Agent之间不直接通信
+> 💡 **架构**: Master Agent负责任务分解和结果汇总，3个子Agent独立开发
 > 💡 **API优先**: 使用GPT-4/Claude API + few-shot提示，跳过微调阶段
 
 #### Week 4: API基础架构
@@ -177,7 +177,7 @@
   - 支持few-shot示例注入
   - 支持Chain-of-Thought
 
-#### Week 5: Placement Agent（核心创新点）【聚焦】
+#### Week 5: Placement Agent
 - [ ] **设计Placement Prompt** `src/agents/placement/prompts.py`
   - 问题描述格式（DAG + 芯片尺寸 + 模块库）
   - Chain-of-Thought提示（"首先分析关键路径..."）
@@ -191,16 +191,30 @@
   - 与GA对比makespan和线长
   - 记录成功率、LLM调用次数
 
-#### Week 6: Scheduling Agent + 简化Routing
-- [ ] **Scheduling Agent** `src/agents/scheduling/`
-  - Prompt: DAG → 调度序列
-  - 策略: 基于List Scheduling + LLM优化优先级决策
-- [ ] **简化Routing**（可能不需要单独Agent）
-  - 使用A*路由作为后处理
-  - LLM仅用于冲突消解决策（如果A*失败）
+#### Week 6: Scheduling Agent
+- [ ] **设计Scheduling Prompt** `src/agents/scheduling/prompts.py`
+  - DAG文本描述格式
+  - 优先级策略说明
+  - Few-shot调度序列示例
+- [ ] **实现Scheduling Agent** `src/agents/scheduling/agent.py`
+  - 基于List Scheduling + LLM优化优先级决策
+  - 或使用LLM直接生成调度序列
+  - 验证器检查依赖满足和资源冲突
+  - 后处理修复（调整时序）
+- [ ] **评估Scheduling效果**
+  - 与List Scheduling对比makespan
+  - 记录调度质量和成功率
 
-#### Week 7: Master Agent集成
-- [ ] **Master Agent** `src/agents/master/agent.py`
+#### Week 7: Routing Agent + Master Agent集成
+- [ ] **设计Routing Prompt** `src/agents/routing/prompts.py`
+  - 时空约束描述
+  - 冲突消解策略
+  - Few-shot路径示例
+- [ ] **实现Routing Agent** `src/agents/routing/agent.py`
+  - LLM生成初始路径
+  - A*优化 + 冲突消解
+  - 验证器检查碰撞和流体约束
+- [ ] **实现Master Agent** `src/agents/master/agent.py`
   - 顺序执行: Placement → Scheduling → Routing
   - 收集各阶段结果
   - 端到端验证
@@ -213,9 +227,10 @@
 - [ ] **评估完整pipeline**
   - 与分层baseline对比
   - 分析各阶段贡献
+  - 全流程成功率统计
 
 **交付物**:
-- `src/agents/` 完整代码
+- `src/agents/` 完整代码（Placement + Scheduling + Routing + Master）
 - `docs/agent_architecture.md` 架构文档
 - `experiments/agent_eval/` 评估结果
 
@@ -360,7 +375,7 @@
 
 **优化亮点**:
 - ✅ 跳过微调，使用API（节省8周）
-- ✅ 聚焦Placement单点（减少复杂度）
+- ✅ 保留全流程3个Agent独立开发
 - ✅ 单轮生成+后处理（减少迭代次数）
 - ✅ 3D可视化优先（提高调试效率）
 
@@ -388,30 +403,36 @@
 | 原计划 | 舍弃理由 |
 |-------|---------|
 | 微调7B/13B模型 | 耗时(数周)、资源要求高，API方式更快验证 |
-| 完整的3个Agent独立开发 | 过于复杂，聚焦Placement单点 |
-| 40周完整周期 | 压缩到24周，聚焦核心创新 |
+| 40周完整周期 | 压缩到24周，提高效率 |
 | Splash-2适配器 | 优先级低，CS220和MFSim已足够 |
-| Routing Agent单独实现 | 简化为A* + LLM冲突消解决策 |
+
+### ✅ 保留的内容
+
+| 原计划 | 保留理由 |
+|-------|---------|
+| **3个Agent独立开发** | 全流程展示LLM优化能力，更符合研究目标 |
+| 完整验证器 | 不仅检查，还生成详细报告供LLM修正 |
+| 3D可视化 | 对理解路由冲突至关重要 |
 
 ### 🎯 新项目路线
 
-**核心理念**: "快速验证 + 单点突破"
+**核心理念**: "快速验证 + 全流程Agent协作"
 
 1. **Phase 1 (3周)**: 打好地基（验证器 + 多样数据）
-2. **Phase 2 (5周)**: 核心创新（Placement Agent + API + 后处理）
+2. **Phase 2 (5周)**: 全流程Agent开发（Placement + Scheduling + Routing + Master）
 3. **Phase 3 (8周)**: 充分对比（vs 传统方法 + 消融实验）
-4. **Phase 4 (8周)**: 论文撰写（聚焦Placement创新点）
+4. **Phase 4 (8周)**: 论文撰写（全流程LLM优化创新）
 
 **预期优势**:
 - 周期从40周缩短到24周（6个月）
 - 无需GPU资源（省去申请和调试时间）
-- 核心创新点清晰（LLM驱动的Placement优化）
+- 全流程展示LLM优化能力（端到端优势更明显）
 - 失败风险低（API方式可快速调整）
 
 **潜在风险与应对**:
 - API成本高 → 使用缓存 + 限制测试集大小
 - API效果不佳 → 快速转向微调（保留退路）
-- 单点突破深度不够 → 充分的后处理修复机制保证质量
+- 3个Agent复杂度高 → 统一接口 + 后处理保证质量
 
 ---
 
