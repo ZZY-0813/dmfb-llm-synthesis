@@ -1,0 +1,207 @@
+{
+  "name": "BroadSpectrumOpiate",
+  "chip_width": 15,
+  "chip_height": 19,
+  "modules": {
+    "dispenser": {
+      "name": "dispenser",
+      "type": "dispenser",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "detector_1x1": {
+      "name": "detector_1x1",
+      "type": "detector",
+      "width": 1,
+      "height": 1,
+      "exec_time": 2,
+      "position": null
+    },
+    "mixer_3x3": {
+      "name": "mixer_3x3",
+      "type": "mixer",
+      "width": 3,
+      "height": 3,
+      "exec_time": 5,
+      "position": null
+    },
+    "waste": {
+      "name": "waste",
+      "type": "waste",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    }
+  },
+  "operations": [
+    {
+      "id": 1,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 3,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 5,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 7,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 9,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 10,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        1
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 11,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        3
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 12,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        5
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 13,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        7
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 14,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        9
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 15,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [],
+      "duration": 5,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 16,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        10,
+        15
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 17,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        11
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 18,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        12
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 19,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        13
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 20,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        14
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "droplets": null
+}

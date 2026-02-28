@@ -1,0 +1,488 @@
+{
+  "name": "FullMorphineELISA",
+  "chip_width": 15,
+  "chip_height": 19,
+  "modules": {
+    "dispenser": {
+      "name": "dispenser",
+      "type": "dispenser",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "mixer_3x3": {
+      "name": "mixer_3x3",
+      "type": "mixer",
+      "width": 3,
+      "height": 3,
+      "exec_time": 5,
+      "position": null
+    },
+    "heater_2x2": {
+      "name": "heater_2x2",
+      "type": "heater",
+      "width": 2,
+      "height": 2,
+      "exec_time": 10,
+      "position": null
+    },
+    "waste": {
+      "name": "waste",
+      "type": "waste",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "detector_1x1": {
+      "name": "detector_1x1",
+      "type": "detector",
+      "width": 1,
+      "height": 1,
+      "exec_time": 2,
+      "position": null
+    }
+  },
+  "operations": [
+    {
+      "id": 1,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 20,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 3,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 20,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 5,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 20,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 7,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 9,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 11,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 12,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        1,
+        7
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 13,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        3,
+        9
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 14,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        5,
+        11
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 15,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        12
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 16,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        13
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 17,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        14
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 18,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        15
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 19,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        16
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 20,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        17
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 22,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 350,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 24,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 350,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 26,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 350,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 27,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        22
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 28,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        24
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 29,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        26
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 30,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        27
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 31,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        28
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 32,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        29
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 34,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 36,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 38,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 43,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 45,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 47,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 100,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 39,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        34
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 40,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        36
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 41,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        38
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 42,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        43,
+        39
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 44,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        45,
+        40
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 46,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        47,
+        41
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 48,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        42
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 49,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        44
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 50,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        46
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 51,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        48
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 52,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        49
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 53,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        50
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "droplets": null
+}

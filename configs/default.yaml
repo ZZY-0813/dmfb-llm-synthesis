@@ -1,0 +1,71 @@
+# Default configuration for DMFB + LLM Synthesis
+
+# Problem generation settings
+generation:
+  seed: 42
+  chip_sizes:
+    - [32, 32]
+    - [64, 64]
+    - [96, 96]
+  num_operations_range: [10, 200]
+  dag_patterns:
+    - linear
+    - parallel
+    - fork_join
+    - random
+    - pcr
+
+# Baseline algorithm settings
+baseline:
+  # Placement GA settings
+  placement:
+    algorithm: ga
+    pop_size: 100
+    generations: 500
+    crossover_rate: 0.8
+    mutation_rate: 0.2
+    elitism: 2
+    seed: 42
+
+  # Scheduling settings
+  scheduling:
+    algorithm: list
+    priority_strategy: asap  # asap, alap, mobility, critical_path
+
+  # Routing settings
+  routing:
+    algorithm: astar
+    strategy: prioritized  # prioritized, iterative
+
+# LLM Agent settings (placeholder for future)
+agents:
+  master:
+    model: gpt-4
+    temperature: 0.7
+    max_iterations: 10
+
+  placement_agent:
+    model: codellama-7b
+    use_finetuned: false
+
+  scheduling_agent:
+    model: codellama-7b
+    use_finetuned: false
+
+  routing_agent:
+    model: codellama-7b
+    use_finetuned: false
+
+# Experiment settings
+experiment:
+  output_dir: experiments/results
+  save_visualizations: true
+  save_intermediate: true
+  num_runs: 5  # Number of runs per problem for statistical significance
+
+# Visualization settings
+visualization:
+  dpi: 300
+  figsize_placement: [10, 10]
+  figsize_schedule: [12, 8]
+  figsize_routing: [12, 12]

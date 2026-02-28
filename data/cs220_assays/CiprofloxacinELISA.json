@@ -1,0 +1,240 @@
+{
+  "name": "CiprofloxacinELISA",
+  "chip_width": 15,
+  "chip_height": 19,
+  "modules": {
+    "dispenser": {
+      "name": "dispenser",
+      "type": "dispenser",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "mixer_3x3": {
+      "name": "mixer_3x3",
+      "type": "mixer",
+      "width": 3,
+      "height": 3,
+      "exec_time": 5,
+      "position": null
+    },
+    "heater_2x2": {
+      "name": "heater_2x2",
+      "type": "heater",
+      "width": 2,
+      "height": 2,
+      "exec_time": 10,
+      "position": null
+    },
+    "waste": {
+      "name": "waste",
+      "type": "waste",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "detector_1x1": {
+      "name": "detector_1x1",
+      "type": "detector",
+      "width": 1,
+      "height": 1,
+      "exec_time": 2,
+      "position": null
+    }
+  },
+  "operations": [
+    {
+      "id": 1,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 3,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 0,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        1
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 2,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        3
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 4,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        0,
+        2
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 5,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        4
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 6,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        5
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 8,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 7,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        8
+      ],
+      "duration": 40,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 9,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        7
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 10,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        9
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 12,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 15,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 11,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        12
+      ],
+      "duration": 30,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 13,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        11
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 14,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        15,
+        13
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 16,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        14
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 17,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        16
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "droplets": null
+}

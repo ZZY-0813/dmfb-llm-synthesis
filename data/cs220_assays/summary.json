@@ -1,0 +1,107 @@
+{
+  "total_assays": 17,
+  "assays": [
+    {
+      "name": "BroadSpectrumOpiate",
+      "operations": 16,
+      "chip_size": "15x19",
+      "critical_path": 12
+    },
+    {
+      "name": "CancerDetection",
+      "operations": 21,
+      "chip_size": "15x19",
+      "critical_path": 116808
+    },
+    {
+      "name": "CiprofloxacinELISA",
+      "operations": 18,
+      "chip_size": "15x19",
+      "critical_path": 3638
+    },
+    {
+      "name": "CoalescingMotivation",
+      "operations": 20,
+      "chip_size": "15x15",
+      "critical_path": 20
+    },
+    {
+      "name": "DiazepamELISA",
+      "operations": 25,
+      "chip_size": "15x19",
+      "critical_path": 1863
+    },
+    {
+      "name": "Dilution",
+      "operations": 22,
+      "chip_size": "17x19",
+      "critical_path": 27
+    },
+    {
+      "name": "FentanylELISA",
+      "operations": 18,
+      "chip_size": "15x19",
+      "critical_path": 3638
+    },
+    {
+      "name": "FullMorphineELISA",
+      "operations": 42,
+      "chip_size": "15x19",
+      "critical_path": 3703
+    },
+    {
+      "name": "GlucoseDetection",
+      "operations": 25,
+      "chip_size": "15x19",
+      "critical_path": 84
+    },
+    {
+      "name": "HeroinELISA",
+      "operations": 5,
+      "chip_size": "15x19",
+      "critical_path": 5772
+    },
+    {
+      "name": "ImageProbeSynth",
+      "operations": 14,
+      "chip_size": "15x19",
+      "critical_path": 397
+    },
+    {
+      "name": "MorphineELISA",
+      "operations": 18,
+      "chip_size": "15x19",
+      "critical_path": 18
+    },
+    {
+      "name": "OpiateDetectionCGO",
+      "operations": 87,
+      "chip_size": "15x19",
+      "critical_path": 3638
+    },
+    {
+      "name": "OxycodoneELISA",
+      "operations": 7,
+      "chip_size": "15x19",
+      "critical_path": 3674
+    },
+    {
+      "name": "PCR",
+      "operations": 10,
+      "chip_size": "15x19",
+      "critical_path": 35
+    },
+    {
+      "name": "PCRDropletReplacement",
+      "operations": 22,
+      "chip_size": "15x19",
+      "critical_path": 306
+    },
+    {
+      "name": "ProbabilisticPCR",
+      "operations": 21,
+      "chip_size": "15x19",
+      "critical_path": 89
+    }
+  ]
+}

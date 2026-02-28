@@ -1,0 +1,48 @@
+# DMFB + LLM Synthesis Project
+# Python 3.10+ required
+
+# Core scientific computing
+numpy>=1.24.0
+scipy>=1.11.0
+matplotlib>=3.7.0
+plotly>=5.15.0
+pandas>=2.0.0
+networkx>=3.1
+
+# Machine Learning & Deep Learning
+torch>=2.0.0
+transformers>=4.35.0
+peft>=0.6.0
+accelerate>=0.24.0
+
+# LLM serving (optional, for local models)
+# vllm>=0.2.0  # Comment out if CUDA not available
+
+# Agent framework
+langchain>=0.1.0
+langchain-community>=0.0.10
+
+# Data and config handling
+pydantic>=2.0.0
+pyyaml>=6.0
+jsonlines>=3.1.0
+datasets>=2.14.0
+
+# Utilities
+tqdm>=4.65.0
+click>=8.1.0
+python-dotenv>=1.0.0
+rich>=13.0.0
+
+# Jupyter for exploration
+jupyterlab>=4.0.0
+ipywidgets>=8.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Code quality
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0

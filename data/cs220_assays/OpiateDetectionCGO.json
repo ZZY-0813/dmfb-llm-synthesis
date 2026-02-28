@@ -1,0 +1,965 @@
+{
+  "name": "OpiateDetectionCGO",
+  "chip_width": 15,
+  "chip_height": 19,
+  "modules": {
+    "dispenser": {
+      "name": "dispenser",
+      "type": "dispenser",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "detector_1x1": {
+      "name": "detector_1x1",
+      "type": "detector",
+      "width": 1,
+      "height": 1,
+      "exec_time": 2,
+      "position": null
+    },
+    "waste": {
+      "name": "waste",
+      "type": "waste",
+      "width": 1,
+      "height": 1,
+      "exec_time": 1,
+      "position": null
+    },
+    "mixer_3x3": {
+      "name": "mixer_3x3",
+      "type": "mixer",
+      "width": 3,
+      "height": 3,
+      "exec_time": 5,
+      "position": null
+    },
+    "heater_2x2": {
+      "name": "heater_2x2",
+      "type": "heater",
+      "width": 2,
+      "height": 2,
+      "exec_time": 10,
+      "position": null
+    }
+  },
+  "operations": [
+    {
+      "id": 4,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 5,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 6,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 7,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 105,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 0,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        4
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 1,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        5
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 2,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        6
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 3,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        7
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 106,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        105
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 8,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        0
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 9,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        1
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 10,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        2
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 11,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        3
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 107,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        106
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 17,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 18,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 12,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        17
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 13,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        18
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 14,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        12,
+        13
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 15,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        14
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 16,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        15
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 48,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 47,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        48
+      ],
+      "duration": 40,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 49,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        47
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 50,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        49
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 51,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 58,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 52,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        51
+      ],
+      "duration": 30,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 53,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        52
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 54,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        58,
+        53
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 56,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        54
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 57,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        56
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 19,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 20,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 21,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        19
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 22,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        20
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 23,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        21,
+        22
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 24,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        23
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 25,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        24
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 83,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 84,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        83
+      ],
+      "duration": 40,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 85,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        84
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 86,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        85
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 87,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 89,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 88,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        87
+      ],
+      "duration": 30,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 91,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        88
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 90,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        89,
+        91
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 92,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        90
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 93,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        92
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 33,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 34,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 35,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        33
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 36,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        34
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 37,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        35,
+        36
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 38,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        37
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 39,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        38
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 71,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 72,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        71
+      ],
+      "duration": 40,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 74,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        72
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 75,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        74
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 76,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 78,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 77,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        76
+      ],
+      "duration": 30,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 80,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        77
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 79,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        78,
+        80
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 81,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        79
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 82,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        81
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 40,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 41,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 42,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        40
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 43,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        41
+      ],
+      "duration": 25,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 44,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        42,
+        43
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 45,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        44
+      ],
+      "duration": 3600,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 46,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        45
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 94,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 95,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        94
+      ],
+      "duration": 40,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 96,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        95
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 97,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        96
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 98,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 100,
+      "op_type": "dispense",
+      "module_type": "dispenser",
+      "dependencies": [],
+      "duration": 10,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 99,
+      "op_type": "cool",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        98
+      ],
+      "duration": 30,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 102,
+      "op_type": "heat",
+      "module_type": "heater_2x2",
+      "dependencies": [
+        99
+      ],
+      "duration": 1800,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 101,
+      "op_type": "mix",
+      "module_type": "mixer_3x3",
+      "dependencies": [
+        100,
+        102
+      ],
+      "duration": 2,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 103,
+      "op_type": "detect",
+      "module_type": "detector_1x1",
+      "dependencies": [
+        101
+      ],
+      "duration": 1,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": 104,
+      "op_type": "output",
+      "module_type": "waste",
+      "dependencies": [
+        103
+      ],
+      "duration": null,
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "droplets": null
+}
