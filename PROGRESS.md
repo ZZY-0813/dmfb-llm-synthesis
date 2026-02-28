@@ -116,29 +116,42 @@
 
 ---
 
-## 🚧 待实现功能
+## 🚧 待实现功能（已根据建议优化）
 
-### Phase 1: Baseline完善与数据准备 (Week 1-4)
+> 💡 **策略调整**: 采用"API优先+快速验证"策略，先使用GPT-4/Claude API验证想法，再决定是否微调
 
-#### Week 1 遗留任务
-- [ ] **Splash-2适配器** - 需要获取工具源码
-- [ ] **CS220/MFSim编译验证** - 需要C++编译环境
+### Phase 1: Baseline完善与验证器核心 (Week 1-3) 【压缩】
 
-#### Week 2 数据生成与验证
-- [ ] 生成小规模测试集：20 ops × 100个，50 ops × 100个
-- [ ] 生成中规模训练集：100 ops × 200个，200 ops × 100个
-- [ ] 生成大规模挑战集：500 ops × 50个
-- [ ] 运行baseline生成标签 (完整pipeline)
-- [ ] 数据分析与统计 (makespan分布、CPL比值等)
+#### Week 1: 验证器核心（高优先级）
+- [ ] **实现Placement验证器** `src/agents/verifier/placement_verifier.py`
+  - 检查模块重叠、越界
+  - 返回详细的冲突报告（具体哪个模块、什么冲突）
+- [ ] **实现Schedule验证器** `src/agents/verifier/schedule_verifier.py`
+  - 检查依赖满足、资源冲突
+  - 识别关键路径违规
+- [ ] **实现Routing验证器** `src/agents/verifier/routing_verifier.py`
+  - 检查液滴碰撞、流体约束
+  - 时空冲突检测（高效实现，使用空间索引）
+- [ ] **统一Verifier接口** `src/agents/verifier/__init__.py`
+  - 集成三个验证器
+  - 生成结构化错误报告（便于LLM理解）
 
-#### Week 3 可视化与验证工具
-- [ ] 改进placement可视化 (模块名称、依赖箭头)
-- [ ] 实现schedule动画 (时间推进显示)
-- [ ] 实现routing动画 (液滴移动轨迹)
-- [ ] 添加3D可视化 (x, y, time)
-- [ ] **关键缺失**: placement验证器 (检查重叠、越界)
-- [ ] **关键缺失**: schedule验证器 (检查依赖、资源冲突)
-- [ ] **关键缺失**: routing验证器 (检查碰撞、流体约束)
+#### Week 2: 数据生成与多baseline标签
+- [ ] 生成小规模测试集：20 ops × 50个，50 ops × 50个
+- [ ] **使用多种baseline生成多样性标签**:
+  - GA布局 + List调度（当前）
+  - **新增**: SA模拟退火布局 + List调度
+  - **新增**: OR-Tools ILP调度（如果可行）
+- [ ] 数据分析：对比不同baseline的makespan差异
+- [ ] **混合真实数据**: CS220的17个用例已就绪
+
+#### Week 3: 3D可视化优先
+- [ ] **实现3D可视化** `src/utils/visualization_3d.py`（高优先级）
+  - 使用matplotlib的mplot3d
+  - 展示x, y, time三维空间中的液滴轨迹
+  - 用于理解路由冲突
+- [ ] 改进placement可视化（模块名称、依赖箭头）
+- [ ] 动画支持（低优先级，可后期）
 
 #### Week 4 Phase 1总结
 - [ ] 添加完整docstring
@@ -149,155 +162,173 @@
 
 ---
 
-### Phase 2: Agent框架开发 (Week 5-12)
+### Phase 2: Agent框架开发 (Week 4-8) 【简化压缩】
 
-#### Week 5-6: Master Agent设计
-- [ ] 设计Agent通信协议 (消息格式、状态机)
-- [ ] 设计迭代优化流程图
-- [ ] 确定LLM选型 (GPT-4 API vs 本地模型)
-- [ ] 实现任务分解功能
-- [ ] 实现子Agent调度器
-- [ ] 实现结果汇总器
-- [ ] 实现冲突检测器
-- [ ] 实现反馈循环机制
-- [ ] 实现重新规划触发器
-- [ ] 实现收敛判断
+> 💡 **架构简化**: Master Agent负责任务分解和结果汇总，子Agent之间不直接通信
+> 💡 **API优先**: 使用GPT-4/Claude API + few-shot提示，跳过微调阶段
 
-**交付物**: `src/agents/master/master_agent.py`, `docs/agent_architecture.md`
+#### Week 4: API基础架构
+- [ ] **实现LLM客户端** `src/agents/llm_client.py`
+  - 支持OpenAI GPT-4 API
+  - 支持Claude API
+  - 统一接口，可切换模型
+- [ ] **实现Prompt模板系统** `src/agents/prompts/base.py`
+  - 可复用的prompt构建器
+  - 支持few-shot示例注入
+  - 支持Chain-of-Thought
 
-#### Week 7-8: Placement Agent
-- [ ] 设计placement任务的prompt模板
-- [ ] 添加Chain-of-Thought提示
-- [ ] 添加Few-shot示例
-- [ ] 实现Python代码生成 (Code-as-Policy)
-- [ ] 实现JSON直接输出
-- [ ] 添加约束检查与后处理修复
-- [ ] 实现从错误中学习
-- [ ] 将baseline结果转换为指令格式
-- [ ] 划分训练/验证集
+#### Week 5: Placement Agent（核心创新点）【聚焦】
+- [ ] **设计Placement Prompt** `src/agents/placement/prompts.py`
+  - 问题描述格式（DAG + 芯片尺寸 + 模块库）
+  - Chain-of-Thought提示（"首先分析关键路径..."）
+  - Few-shot示例（从baseline结果中选择优质示例）
+- [ ] **实现Placement Agent** `src/agents/placement/agent.py`
+  - 调用LLM生成布局方案
+  - 使用验证器检查可行性
+  - **单轮生成 + 后处理修复**: 用启发式算法（局部搜索）修复重叠
+  - 如仍不可行，反馈错误给LLM重新生成（最多3次）
+- [ ] **评估Placement效果**
+  - 与GA对比makespan和线长
+  - 记录成功率、LLM调用次数
 
-**交付物**: `src/agents/placement/placement_agent.py`, `src/agents/placement/prompts.py`, `data/finetune/placement/train.jsonl`
+#### Week 6: Scheduling Agent + 简化Routing
+- [ ] **Scheduling Agent** `src/agents/scheduling/`
+  - Prompt: DAG → 调度序列
+  - 策略: 基于List Scheduling + LLM优化优先级决策
+- [ ] **简化Routing**（可能不需要单独Agent）
+  - 使用A*路由作为后处理
+  - LLM仅用于冲突消解决策（如果A*失败）
 
-#### Week 9-10: Scheduling Agent
-- [ ] 设计scheduling任务的prompt模板
-- [ ] 将DAG转换为文本描述
-- [ ] 添加优先级策略说明
-- [ ] 实现序列生成策略
-- [ ] 或使用List Scheduling + LLM优化决策
-- [ ] 添加约束满足保证
-- [ ] 提取调度序列作为训练目标
-- [ ] 准备instruction-response对
+#### Week 7: Master Agent集成
+- [ ] **Master Agent** `src/agents/master/agent.py`
+  - 顺序执行: Placement → Scheduling → Routing
+  - 收集各阶段结果
+  - 端到端验证
+  - 错误反馈与重试（最多2轮完整迭代）
 
-**交付物**: `src/agents/scheduling/scheduling_agent.py`, `src/agents/scheduling/prompts.py`, `data/finetune/scheduling/train.jsonl`
+#### Week 8: 优化与评估
+- [ ] **RAG增强（轻量级）** `src/agents/rag/`
+  - 使用FAISS检索相似问题
+  - 动态添加few-shot示例
+- [ ] **评估完整pipeline**
+  - 与分层baseline对比
+  - 分析各阶段贡献
 
-#### Week 11-12: Routing Agent + Verifier Agent
-- [ ] 设计routing任务的prompt模板
-- [ ] 描述时空约束
-- [ ] 添加冲突消解策略
-- [ ] 实现路径生成
-- [ ] 或使用A* + LLM冲突消解
-- [ ] 多液滴协同路由
-- [ ] 集成验证工具
-- [ ] 实现冲突报告生成
-- [ ] 实现修复建议生成
-
-**交付物**: `src/agents/routing/routing_agent.py`, `src/agents/verifier/verifier_agent.py`
-
----
-
-### Phase 3: LLM集成与训练 (Week 13-24)
-
-#### Week 13-16: 模型微调
-- [ ] 申请GPU资源 (实验室服务器/云计算)
-- [ ] 安装vLLM / TGI用于推理
-- [ ] 安装PEFT用于微调
-- [ ] 下载基础模型 (CodeLlama-7B/13B)
-- [ ] **Placement Agent微调** - LoRA配置, 训练3-5 epoch
-- [ ] **Scheduling Agent微调** - 类似训练流程
-- [ ] **Routing Agent微调** - 路径生成模型
-- [ ] **Master Agent微调 (可选)** - 迭代优化轨迹
-
-**交付物**: `models/placement-agent/`, `models/scheduling-agent/`, `models/routing-agent/`
-
-#### Week 17-20: RAG与增强
-- [ ] 安装ChromaDB或FAISS
-- [ ] 将baseline结果编码为向量
-- [ ] 实现相似问题检索 (`src/agents/rag/retriever.py`)
-- [ ] 基于问题相似度选择Few-shot示例
-- [ ] 动态添加到prompt中
-- [ ] 收集"错误->修复"的训练对
-- [ ] 实现在线学习 (可选)
-- [ ] 分析常见失败模式
-- [ ] 设计针对性的修复策略
-- [ ] 实现早期终止策略
-
-#### Week 21-24: 对比实验
-- [ ] 设计对比表格 (vs GA, vs SA, vs 分层方法)
-- [ ] 设计消融实验 (各组件贡献)
-- [ ] 选择测试集 (留出验证集)
-- [ ] 在测试集上运行所有方法
-- [ ] 记录makespan, runtime, success rate
-- [ ] 消融实验: 无LLM、单vs多Agent、7B vs 13B、有无迭代优化、有无RAG
-- [ ] 鲁棒性测试 (不同规模、约束严格程度)
-- [ ] 统计分析 (t-test等)
-- [ ] 生成对比图表
-- [ ] 分析失败案例
-
-**交付物**: `experiments/results/` 目录，包含所有结果和图表
+**交付物**:
+- `src/agents/` 完整代码
+- `docs/agent_architecture.md` 架构文档
+- `experiments/agent_eval/` 评估结果
 
 ---
 
-### Phase 4: 论文撰写与答辩 (Week 25-40)
+### Phase 3: Prompt优化与对比实验 (Week 9-16) 【简化合并】
 
-#### Week 25-28: 论文初稿
-- [ ] 确定投稿目标 (DAC/ICCAD/TCAD)
+> 💡 **无需微调**: 专注于提示工程和API优化，大幅缩短周期
+
+#### Week 9-10: Prompt工程优化
+- [ ] **Prompt迭代优化** `src/agents/prompts/optimization.py`
+  - 测试不同prompt模板效果
+  - A/B测试Chain-of-Thought vs 直接生成
+  - 测试few-shot示例数量 (1-shot, 3-shot, 5-shot)
+  - 记录每种配置的成功率
+- [ ] **自动示例选择** `src/agents/rag/retriever.py`
+  - 使用FAISS检索相似问题
+  - 动态选择最优few-shot示例
+- [ ] **错误分析**
+  - 收集常见失败模式
+  - 针对性改进prompt
+
+#### Week 11-14: 对比实验
+- [ ] **设计对比实验**:
+  - vs GA布局 + List调度（传统baseline）
+  - vs 模拟退火布局
+  - vs **分层流水线**（先布局再调度再路由，无迭代）
+  - vs **纯LLM**（无后处理修复）
+  - vs **LLM + 后处理**（完整方案）
+- [ ] **消融实验**:
+  - 有无Chain-of-Thought
+  - 有无few-shot示例
+  - 有无RAG增强
+  - 后处理修复的作用
+  - GPT-4 vs Claude效果对比
+- [ ] **鲁棒性测试**:
+  - 不同问题规模 (20/50/100/200 ops)
+  - 不同芯片尺寸 (10x10, 15x15, 20x20)
+  - 不同DAG模式 (linear, parallel, fork_join, random)
+- [ ] **统计分析**: t-test, 成功率, 平均LLM调用次数
+
+#### Week 15-16: 成本分析与优化
+- [ ] **API成本分析**
+  - 记录每个问题的token消耗
+  - 计算平均成本 per problem
+  - 对比不同策略的cost-effectiveness
+- [ ] **效率优化**
+  - 并行调用LLM（如果独立）
+  - 缓存机制（相似问题复用结果）
+
+**交付物**: `experiments/results/` 目录，包含所有结果、图表、成本分析
+
+---
+
+### Phase 4: 论文撰写与答辩 (Week 17-24) 【提前开始】
+
+> 💡 **项目周期缩短**: 从40周压缩到24周，聚焦核心创新点
+
+#### Week 17-18: 论文大纲与初稿
+- [ ] 确定投稿目标 (DAC/ICCAD/TCAD，优先考虑TCAD或ICCAD)
 - [ ] 制定论文大纲
-- [ ] Introduction (背景、挑战、贡献)
-- [ ] Related Work (DMFB综述、LLM for EDA、多Agent系统)
-- [ ] Methodology (架构图、Agent设计、迭代优化、复杂度分析)
+- [ ] 撰写Introduction (背景、挑战、贡献3点)
+- [ ] 撰写Related Work (DMFB综述、LLM for EDA)
 
-**交付物**: `paper/outline.md`, `paper/draft_v1.pdf`
+**交付物**: `paper/outline.md`, `paper/intro_related.tex`
 
-#### Week 29-32: 实验与结果章节
-- [ ] 实验设置 (硬件、软件、数据集、评估指标)
-- [ ] 主要结果 (对比表格、扩展性图表、运行时间、成功率)
-- [ ] 消融研究 (组件贡献、参数敏感性、Case study)
-- [ ] 讨论 (结果解释、局限性、未来工作)
+#### Week 19-20: Methodology
+- [ ] 系统架构图 (简化版)
+- [ ] Placement Agent详细设计 (核心创新)
+- [ ] 验证器与后处理修复机制
+- [ ] 复杂度分析
 
-#### Week 33-36: 论文完善
+**交付物**: `paper/methodology.tex`
+
+#### Week 21-22: 实验与结果
+- [ ] 实验设置 (API配置、数据集、评估指标)
+- [ ] 主要结果 (vs GA, vs 分层流水线)
+- [ ] 消融研究 (prompt策略、后处理、RAG)
+- [ ] 成本分析 (API token消耗)
+- [ ] Case study (具体成功案例)
+
+**交付物**: `paper/experiments.tex`, 所有图表
+
+#### Week 23-24: 完善与投稿准备
 - [ ] 整合所有章节
-- [ ] 检查逻辑连贯性
-- [ ] 补充引用文献
 - [ ] 导师审阅与修改
-- [ ] 图表优化 (tikz/illustrator)
-- [ ] 格式调整 (页数限制、补充材料)
-
-#### Week 37-40: 投稿与答辩
-- [ ] 论文投稿
-- [ ] 制作答辩PPT
-- [ ] 准备演讲稿
-- [ ] 模拟答辩
-- [ ] 代码开源准备 (整理、README、notebook、脱敏)
-- [ ] 最终答辩
+- [ ] 图表优化
+- [ ] 格式调整
+- [ ] 代码开源准备 (README, notebook)
+- [ ] 准备投稿材料
 
 ---
 
-## 📝 当前优先任务 (本周)
+## 📝 当前优先任务 (本周 - 按新计划)
 
 ### 高优先级 (必须完成)
-1. [ ] **运行 `python demo.py` 验证框架**
-2. [ ] **生成第一批小规模数据集** (20 ops × 10个)
-3. [ ] **询问导师关于MFSim/Splash-2获取**
+1. [ ] **运行 `python demo.py` 验证框架基础功能**
+2. [ ] **实现Placement验证器** `src/agents/verifier/placement_verifier.py`
+   - 检查模块重叠、越界
+   - 返回结构化错误报告
+3. [ ] **申请OpenAI/Anthropic API Key** (用于后续Agent开发)
 
 ### 中优先级 (尽量完成)
-4. [ ] 运行baseline获取初始结果
-5. [ ] 检查所有代码是否可以正常运行
-6. [ ] 安装C++编译环境 (MinGW/Visual Studio)
+4. [ ] **实现Schedule验证器** `src/agents/verifier/schedule_verifier.py`
+5. [ ] 生成第一批小规模数据集 (20 ops × 20个)
+6. [ ] 运行baseline获取多样性标签 (GA + SA)
 
 ### 低优先级 (有时间再做)
-7. [ ] 完善可视化动画
-8. [ ] 编写更多单元测试
-9. [ ] 阅读相关论文
+7. [ ] 实现Routing验证器框架
+8. [ ] 调研Claude API pricing和rate limits
+9. [ ] 阅读LLM for EDA相关论文
+
+**本周目标**: 验证器核心完成，API准备就绪，可开始Phase 2开发
 
 ---
 
@@ -317,17 +348,70 @@
 
 ---
 
-## 🎯 关键检查点状态
+## 🎯 关键检查点状态（优化后）
 
 | 时间点 | 检查点 | 验收标准 | 状态 |
 |-------|-------|---------|------|
-| 第4周末 | Phase 1完成 | 有1000+训练样本，baseline可一键运行 | 🚧 进行中 |
-| 第8周末 | Agent原型 | Master+3个子Agent可通信 | ⏳ 未开始 |
-| 第12周末 | Agent框架完成 | 端到端pipeline可跑通 | ⏳ 未开始 |
-| 第16周末 | 微调完成 | 有训练好的模型权重 | ⏳ 未开始 |
-| 第24周末 | 实验完成 | 所有对比实验数据就绪 | ⏳ 未开始 |
-| 第32周末 | 论文初稿 | 完整论文，导师认可 | ⏳ 未开始 |
-| 第40周末 | 项目完成 | 论文投稿/答辩通过 | ⏳ 未开始 |
+| 第3周末 | Phase 1完成 | 验证器核心完成，100+样本，3D可视化 | 🚧 进行中 |
+| 第8周末 | Agent框架完成 | Placement Agent可运行，API调用正常 | ⏳ 未开始 |
+| 第16周末 | 实验完成 | 所有对比实验数据就绪，成本分析完成 | ⏳ 未开始 |
+| 第24周末 | 论文初稿 | 完整论文，导师认可 | ⏳ 未开始 |
+| **总周期** | **24周** | **从40周压缩到24周（6个月）** | 🎯 |
+
+**优化亮点**:
+- ✅ 跳过微调，使用API（节省8周）
+- ✅ 聚焦Placement单点（减少复杂度）
+- ✅ 单轮生成+后处理（减少迭代次数）
+- ✅ 3D可视化优先（提高调试效率）
+
+---
+
+## 📋 优化决策说明
+
+基于改进建议分析，以下是本次调整的核心理念：
+
+### ✅ 采纳的优化
+
+| 建议 | 决策 | 理由 |
+|-----|------|------|
+| **API优先** | 使用GPT-4/Claude API | 跳过耗时数月的微调，快速验证核心想法 |
+| **Agent架构简化** | Master + 3个子Agent，不直接通信 | 降低状态管理复杂度，通过Master传递信息 |
+| **单轮生成+后处理** | LLM生成方案 + 启发式修复 | 减少LLM调用次数，传统算法保证可行性 |
+| **聚焦Placement** | 核心创新点 | 时间有限，单点突破比全流程更易出成果 |
+| **验证器优先** | 作为核心模块 | 不仅检查，还生成详细报告供LLM修正 |
+| **3D可视化** | 优先实现 | 对理解路由冲突至关重要 |
+| **多baseline标签** | GA + SA + ILP | 提供更多样性的few-shot示例 |
+| **对比分层流水线** | 必须包含 | 更能体现LLM端到端优化的优势 |
+
+### ❌ 舍弃的内容
+
+| 原计划 | 舍弃理由 |
+|-------|---------|
+| 微调7B/13B模型 | 耗时(数周)、资源要求高，API方式更快验证 |
+| 完整的3个Agent独立开发 | 过于复杂，聚焦Placement单点 |
+| 40周完整周期 | 压缩到24周，聚焦核心创新 |
+| Splash-2适配器 | 优先级低，CS220和MFSim已足够 |
+| Routing Agent单独实现 | 简化为A* + LLM冲突消解决策 |
+
+### 🎯 新项目路线
+
+**核心理念**: "快速验证 + 单点突破"
+
+1. **Phase 1 (3周)**: 打好地基（验证器 + 多样数据）
+2. **Phase 2 (5周)**: 核心创新（Placement Agent + API + 后处理）
+3. **Phase 3 (8周)**: 充分对比（vs 传统方法 + 消融实验）
+4. **Phase 4 (8周)**: 论文撰写（聚焦Placement创新点）
+
+**预期优势**:
+- 周期从40周缩短到24周（6个月）
+- 无需GPU资源（省去申请和调试时间）
+- 核心创新点清晰（LLM驱动的Placement优化）
+- 失败风险低（API方式可快速调整）
+
+**潜在风险与应对**:
+- API成本高 → 使用缓存 + 限制测试集大小
+- API效果不佳 → 快速转向微调（保留退路）
+- 单点突破深度不够 → 充分的后处理修复机制保证质量
 
 ---
 
