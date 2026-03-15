@@ -123,18 +123,18 @@
 ### Phase 1: Baseline完善与验证器核心 (Week 1-3) 【压缩】
 
 #### Week 1: 验证器核心（高优先级）
-- [ ] **实现Placement验证器** `src/agents/verifier/placement_verifier.py`
-  - 检查模块重叠、越界
-  - 返回详细的冲突报告（具体哪个模块、什么冲突）
+- [x] **实现Placement验证器** `src/agents/verifier/placement_verifier.py` ✅
+  - 检查模块重叠、越界 ✅
+  - 返回详细的冲突报告（具体哪个模块、什么冲突）✅
 - [ ] **实现Schedule验证器** `src/agents/verifier/schedule_verifier.py`
   - 检查依赖满足、资源冲突
   - 识别关键路径违规
 - [ ] **实现Routing验证器** `src/agents/verifier/routing_verifier.py`
   - 检查液滴碰撞、流体约束
   - 时空冲突检测（高效实现，使用空间索引）
-- [ ] **统一Verifier接口** `src/agents/verifier/__init__.py`
-  - 集成三个验证器
-  - 生成结构化错误报告（便于LLM理解）
+- [x] **统一Verifier接口** `src/agents/verifier/__init__.py` ✅
+  - 集成三个验证器（已完成Placement，预留Schedule/Routing扩展点）✅
+  - 生成结构化错误报告（便于LLM理解）✅
 
 #### Week 2: 数据生成与多baseline标签
 - [ ] 生成小规模测试集：20 ops × 50个，50 ops × 50个
