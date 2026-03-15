@@ -19,9 +19,16 @@ from .placement_verifier import (
     verify_placement
 )
 
-# 占位符：后续实现
-# from .schedule_verifier import ScheduleVerifier, verify_schedule
-# from .routing_verifier import RoutingVerifier, verify_routing
+from .schedule_verifier import (
+    ScheduleVerifier,
+    verify_schedule
+)
+
+from .routing_verifier import (
+    RoutingVerifier,
+    DropletPath,
+    verify_routing
+)
 
 __all__ = [
     # 基类
@@ -35,13 +42,14 @@ __all__ = [
     'ModulePosition',
     'verify_placement',
 
-    # TODO: Scheduling验证器 (Week 1-2)
-    # 'ScheduleVerifier',
-    # 'verify_schedule',
+    # Scheduling验证器
+    'ScheduleVerifier',
+    'verify_schedule',
 
-    # TODO: Routing验证器 (Week 2)
-    # 'RoutingVerifier',
-    # 'verify_routing',
+    # Routing验证器
+    'RoutingVerifier',
+    'DropletPath',
+    'verify_routing',
 ]
 
 
@@ -59,13 +67,13 @@ def get_verifier(stage: str) -> BaseVerifier:
 
     if stage == "placement":
         return PlacementVerifier()
-    # elif stage == "scheduling":
-    #     return ScheduleVerifier()
-    # elif stage == "routing":
-    #     return RoutingVerifier()
+    elif stage == "scheduling":
+        return ScheduleVerifier()
+    elif stage == "routing":
+        return RoutingVerifier()
     else:
         raise ValueError(f"Unknown verification stage: {stage}. "
-                        f"Available: placement")  # , scheduling, routing")
+                        f"Available: placement, scheduling, routing")
 
 
 class UnifiedVerifier:
@@ -77,8 +85,8 @@ class UnifiedVerifier:
 
     def __init__(self):
         self.placement_verifier = PlacementVerifier()
-        # self.schedule_verifier = ScheduleVerifier()  # TODO
-        # self.routing_verifier = RoutingVerifier()    # TODO
+        self.schedule_verifier = ScheduleVerifier()
+        self.routing_verifier = RoutingVerifier()
 
     def verify_full(self, problem: 'Problem', solution: Dict[str, Any]) -> Dict[str, VerificationResult]:
         """
@@ -100,13 +108,19 @@ class UnifiedVerifier:
                 {"placements": solution["placements"]}
             )
 
-        # 2. 验证调度 (TODO)
-        # if "schedule" in solution:
-        #     results["scheduling"] = self.schedule_verifier.verify(...)
+        # 2. 验证调度
+        if "schedule" in solution:
+            results["scheduling"] = self.schedule_verifier.verify(
+                problem,
+                {"schedule": solution["schedule"]}
+            )
 
-        # 3. 验证路由 (TODO)
-        # if "routes" in solution:
-        #     results["routing"] = self.routing_verifier.verify(...)
+        # 3. 验证路由
+        if "routes" in solution:
+            results["routing"] = self.routing_verifier.verify(
+                problem,
+                {"routes": solution["routes"]}
+            )
 
         return results
 
