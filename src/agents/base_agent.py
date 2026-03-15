@@ -227,7 +227,7 @@ class BaseAgent(ABC):
             if is_valid:
                 elapsed = time.time() - start_time
                 if self.verbose:
-                    print(f"  ✓ Solved in {iterations} iterations, {elapsed:.2f}s")
+                    print(f"  [OK] Solved in {iterations} iterations, {elapsed:.2f}s")
 
                 self.total_llm_calls += llm_calls
                 self.total_iterations += iterations
@@ -247,7 +247,7 @@ class BaseAgent(ABC):
         # Max iterations reached
         elapsed = time.time() - start_time
         if self.verbose:
-            print(f"  ✗ Failed after {iterations} iterations")
+            print(f"  [FAIL] Failed after {iterations} iterations")
 
         self.total_llm_calls += llm_calls
         self.total_iterations += iterations
@@ -330,7 +330,7 @@ class MasterAgent:
 
         if not placement_result.success:
             if self.verbose:
-                print("\n❌ PLACEMENT FAILED - Cannot proceed")
+                print("\n[FAIL] PLACEMENT FAILED - Cannot proceed")
             return self._finalize_results(results, problem, time.time() - start_time)
 
         context.placement = placement_result.solution
@@ -341,7 +341,7 @@ class MasterAgent:
 
         if not schedule_result.success:
             if self.verbose:
-                print("\n❌ SCHEDULING FAILED - Cannot proceed")
+                print("\n[FAIL] SCHEDULING FAILED - Cannot proceed")
             return self._finalize_results(results, problem, time.time() - start_time)
 
         context.schedule = schedule_result.solution

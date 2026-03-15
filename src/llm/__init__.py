@@ -15,6 +15,8 @@ from .client import (
     quick_chat
 )
 
+from .mock_client import MockLLMClient
+
 __all__ = [
     'LLMClient',
     'LLMConfig',
@@ -24,4 +26,5 @@ __all__ = [
     'LLMError',
     'get_default_client',
     'quick_chat',
+    'MockLLMClient',
 ]
