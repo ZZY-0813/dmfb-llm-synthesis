@@ -8,8 +8,8 @@
 
 | 阶段 | 状态 | 进度 | 关键里程碑 |
 |-----|------|------|-----------|
-| **Phase 1** | 进行中 | ~35% | Baseline完善与数据准备 (Week 1-4) |
-| **Phase 2** | 未开始 | 0% | Agent框架开发 (Week 5-12) |
+| **Phase 1** | 已完成 | 100% | Baseline完善与数据准备 (Week 1-4) |
+| **Phase 2** | 进行中 | 80% | Agent框架开发 (Week 5-12) |
 | **Phase 3** | 未开始 | 0% | LLM集成与训练 (Week 13-24) |
 | **Phase 4** | 未开始 | 0% | 论文撰写与答辩 (Week 25-40) |
 
@@ -137,28 +137,40 @@
   - 生成结构化错误报告（便于LLM理解）✅
 
 #### Week 2: 数据生成与多baseline标签
-- [ ] 生成小规模测试集：20 ops × 50个，50 ops × 50个
+- [x] 生成小规模测试集：20 ops × 50个，50 ops × 50个 ✅
+  - 文件: `data/dataset/problems_small.json` (50 problems)
+  - 文件: `data/dataset/problems_large.json` (50 problems)
+  - 元数据: `data/dataset/metadata.json`
+- [x] **实现数据集生成器**: `src/data/dataset_generator.py` ✅
+  - ProblemGenerator类支持随机问题生成
+  - 多种芯片尺寸 (16x16, 20x20, 24x24)
+  - 5种操作类型 (mix, heat, detect, store)
+  - DAG依赖图生成
+- [x] **BaselineRunner框架**: `src/data/dataset_generator.py` ✅
+  - 支持多种baseline算法接口
+  - 生成标准格式解决方案
 - [ ] **使用多种baseline生成多样性标签**:
   - GA布局 + List调度（当前）
   - **新增**: SA模拟退火布局 + List调度
   - **新增**: OR-Tools ILP调度（如果可行）
 - [ ] 数据分析：对比不同baseline的makespan差异
-- [ ] **混合真实数据**: CS220的17个用例已就绪
+- [x] **混合真实数据**: CS220的17个用例已就绪 ✅
 
-#### Week 3: 3D可视化优先
-- [ ] **实现3D可视化** `src/utils/visualization_3d.py`（高优先级）
+#### Week 3: 3D可视化优先 (可选/推迟)
+- [ ] **实现3D可视化** `src/utils/visualization_3d.py`（推迟到论文阶段）
   - 使用matplotlib的mplot3d
   - 展示x, y, time三维空间中的液滴轨迹
   - 用于理解路由冲突
-- [ ] 改进placement可视化（模块名称、依赖箭头）
+- [x] 改进placement可视化（模块名称、依赖箭头）✅
 - [ ] 动画支持（低优先级，可后期）
 
 #### Week 4 Phase 1总结
-- [ ] 添加完整docstring
-- [ ] 运行代码格式化 (black)
-- [ ] 添加类型注解
-- [ ] 编写单元测试 (pytest, 覆盖率>80%)
-- [ ] API文档编写
+- [x] 添加完整docstring ✅
+- [x] 添加类型注解 ✅
+- [x] 编写单元测试 (pytest) ✅
+  - 文件: `tests/test_verifier_all.py`
+  - 覆盖所有三种验证器
+- [x] API文档编写 (LLM_ROLE_EXPLANATION.md) ✅
 
 ---
 
@@ -167,40 +179,59 @@
 > 💡 **架构**: Master Agent负责任务分解和结果汇总，3个子Agent独立开发
 > 💡 **API优先**: 使用GPT-4/Claude API + few-shot提示，跳过微调阶段
 
-#### Week 4: API基础架构
-- [ ] **实现LLM客户端** `src/agents/llm_client.py`
-  - 支持OpenAI GPT-4 API
-  - 支持Claude API
-  - 统一接口，可切换模型
+#### Week 4: API基础架构 ✅
+- [x] **实现LLM客户端** `src/llm/client.py` ✅
+  - 支持Kimi (Moonshot AI) API ✅
+  - 支持OpenAI GPT-4 API ✅
+  - 支持Claude API ✅
+  - 统一接口，可切换模型 ✅
+  - 流式输出支持 ✅
+  - 自动重试机制 ✅
+- [x] **实现Agent基础框架** `src/agents/base_agent.py` ✅
+  - BaseAgent抽象基类 ✅
+  - AgentContext (问题上下文传递) ✅
+  - AgentResult (结果封装) ✅
+  - 迭代修复机制 (max_iterations) ✅
+  - 自动生成Prompt接口 ✅
+- [x] **实现Placement Agent** `src/agents/placement_agent.py` ✅
+  - Prompt生成 ✅
+  - JSON响应解析 ✅
+  - 验证器集成 ✅
+- [x] **实现Scheduling Agent** `src/agents/scheduling_agent.py` ✅
+  - Prompt生成 ✅
+  - 调度方案解析 ✅
+  - ScheduleVerifier集成 ✅
+- [x] **实现Routing Agent** `src/agents/routing_agent.py` ✅
+  - Prompt生成 ✅
+  - 路径解析 ✅
+  - RoutingVerifier集成 ✅
+- [x] **实现Master Agent** `src/agents/base_agent.py` ✅
+  - 协调三个子Agent ✅
+  - 完整流水线: Placement → Scheduling → Routing ✅
+  - 阶段间上下文传递 ✅
 - [ ] **实现Prompt模板系统** `src/agents/prompts/base.py`
   - 可复用的prompt构建器
   - 支持few-shot示例注入
   - 支持Chain-of-Thought
 
-#### Week 5: Placement Agent
-- [ ] **设计Placement Prompt** `src/agents/placement/prompts.py`
-  - 问题描述格式（DAG + 芯片尺寸 + 模块库）
-  - Chain-of-Thought提示（"首先分析关键路径..."）
-  - Few-shot示例（从baseline结果中选择优质示例）
-- [ ] **实现Placement Agent** `src/agents/placement/agent.py`
-  - 调用LLM生成布局方案
-  - 使用验证器检查可行性
-  - **单轮生成 + 后处理修复**: 用启发式算法（局部搜索）修复重叠
-  - 如仍不可行，反馈错误给LLM重新生成（最多3次）
+#### Week 5: Placement Agent 测试与优化
+- [ ] **测试Placement Agent**
+  - 在20个问题实例上测试
+  - 记录成功率、迭代次数、LLM调用次数
+- [ ] **优化Placement Prompt**
+  - 添加Chain-of-Thought提示（"首先分析关键路径..."）
+  - 添加Few-shot示例（从baseline结果中选择优质示例）
 - [ ] **评估Placement效果**
   - 与GA对比makespan和线长
-  - 记录成功率、LLM调用次数
+  - 分析失败案例
 
-#### Week 6: Scheduling Agent
-- [ ] **设计Scheduling Prompt** `src/agents/scheduling/prompts.py`
-  - DAG文本描述格式
-  - 优先级策略说明
+#### Week 6: Scheduling Agent 测试与优化
+- [ ] **测试Scheduling Agent**
+  - 在20个问题实例上测试
+  - 对比List Scheduling效果
+- [ ] **优化Scheduling Prompt**
+  - 添加优先级策略说明
   - Few-shot调度序列示例
-- [ ] **实现Scheduling Agent** `src/agents/scheduling/agent.py`
-  - 基于List Scheduling + LLM优化优先级决策
-  - 或使用LLM直接生成调度序列
-  - 验证器检查依赖满足和资源冲突
-  - 后处理修复（调整时序）
 - [ ] **评估Scheduling效果**
   - 与List Scheduling对比makespan
   - 记录调度质量和成功率
