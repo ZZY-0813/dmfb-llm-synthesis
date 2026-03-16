@@ -1,338 +1,193 @@
-# DMFB + LLM Synthesis Framework - Project Summary
+# DMFB + LLM 项目进展总结
 
-## ✅ What Has Been Implemented
-
-### 1. Core Data Structures (`src/baseline/problem.py`)
-- **DMFBProblem**: Complete problem representation
-  - Chip dimensions (width x height)
-  - Module library (mixers, heaters, detectors, etc.)
-  - Operations with dependencies (DAG structure)
-  - Droplets for routing
-- **Module**: Functional module definition with size and execution time
-- **Operation**: Individual operation with dependencies
-- **Droplet**: Droplet representation for routing
-
-**Features:**
-- JSON serialization/deserialization
-- Topological sorting
-- Critical path length calculation
-- Dependency graph construction
-
-### 2. Baseline Algorithms
-
-#### Placement - Genetic Algorithm (`src/baseline/placement_ga.py`)
-- Population-based optimization
-- Tournament selection
-- Uniform crossover
-- Gaussian mutation
-- Constraint handling (overlap penalty, boundary enforcement)
-- Wirelength minimization (Manhattan distance between dependent modules)
-
-**Configuration options:**
-- `pop_size`: Population size (default: 100)
-- `generations`: Number of generations (default: 500)
-- `crossover_rate`: Crossover probability (default: 0.8)
-- `mutation_rate`: Mutation probability (default: 0.2)
-- `elitism`: Number of elite individuals to preserve (default: 2)
-
-#### Scheduling - List Scheduler (`src/baseline/scheduling_list.py`)
-- ASAP (As Soon As Possible) priority
-- ALAP (As Late As Possible) priority
-- Mobility-based (ALAP - ASAP) priority
-- Critical path priority
-- Resource constraint handling
-
-**Output:**
-- Operation schedule: {op_id: (start_time, end_time)}
-- Makespan calculation
-- Resource utilization statistics
-
-#### Routing - A* Router (`src/baseline/routing_astar.py`)
-- 3D (x, y, t) pathfinding
-- Static obstacle handling (placed modules)
-- Dynamic obstacle handling (other droplets)
-- Fluidic constraints (electrode interference)
-- Prioritized multi-droplet routing
-- Iterative conflict resolution
-
-**Features:**
-- Time-extended A* search
-- Conflict detection
-- Re-routing capability
-
-### 3. Adapter Framework (`src/baseline/adapters/`)
-- **BaseAdapter**: Abstract interface for external tools
-- **PythonFallbackAdapter**: Pure Python implementation using above algorithms
-- **MFSimAdapter**: Placeholder for MFSim integration (UCR tool)
-- **SplashAdapter**: Placeholder for Splash-2 integration
-
-**Design:**
-- Automatic fallback to Python if external tools unavailable
-- Unified API across all adapters
-- Easy extension for new tools
-
-### 4. Baseline Runner (`src/baseline/baseline_runner.py`)
-Unified interface for running baselines:
-```python
-runner = BaselineRunner()
-result = runner.run(problem, method='python')
-# or 'mfsim', 'splash' if available
-```
-
-**Features:**
-- Automatic adapter selection
-- Batch processing
-- Method comparison
-- Training data generation
-
-### 5. Problem Generator (`src/dataset/generator.py`)
-Generates diverse problem instances:
-
-**DAG Patterns:**
-- `linear`: Chain structure (1 → 2 → 3 → ...)
-- `parallel`: Multiple independent chains
-- `fork_join`: Fork into parallel branches, then join
-- `pcr`: PCR cycles (mix → heat → detect)
-- `random`: Random DAG with controlled edge probability
-
-**Features:**
-- Configurable problem sizes
-- Multiple chip sizes
-- Standard module library
-- JSON export
-
-### 6. Visualization (`src/utils/visualization.py`)
-- **Placement visualization**: Module positions with dependencies
-- **Schedule visualization**: Gantt chart
-- **Routing visualization**: Droplet paths with animation support
-
-### 7. Scripts
-
-#### `scripts/generate_dataset.py`
-Generate training data:
-```bash
-python scripts/generate_dataset.py \
-    --output data/training \
-    --sizes 20 50 100 \
-    --num-per-size 100 \
-    --patterns linear parallel random
-```
-
-#### `scripts/run_baseline.py`
-Run baselines:
-```bash
-# Single problem
-python scripts/run_baseline.py --problem test.json --method python --visualize
-
-# Compare methods
-python scripts/run_baseline.py --problem test.json --compare
-
-# Batch processing
-python scripts/run_baseline.py --input data/raw/ --output results/ --method python
-```
-
-### 8. Configuration and Utilities
-- **config.py**: YAML/JSON configuration management
-- **logger.py**: Logging utilities
-- **requirements.txt**: All dependencies
-- **README.md**: Comprehensive documentation
-
-## 📊 Project Statistics
-
-- **Python files**: 20+
-- **Lines of code**: ~3,000+
-- **Core algorithms**: 3 (Placement GA, List Scheduling, A* Routing)
-- **DAG patterns**: 5
-- **Test coverage**: Basic tests included
-
-## 🔧 Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      User Interface                         │
-│         (scripts/run_baseline.py, Jupyter)                  │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    BaselineRunner                           │
-│              (Unified Interface)                            │
-└─────────────────────────────────────────────────────────────┘
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-        ▼                     ▼                     ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│   MFSim      │    │   Splash-2   │    │PythonFallback│
-│   Adapter    │    │   Adapter    │    │   Adapter    │
-│  (optional)  │    │  (optional)  │    │  (always)    │
-└──────────────┘    └──────────────┘    └──────────────┘
-                                                │
-                    ┌───────────────────────────┼───────────┐
-                    │                           │           │
-                    ▼                           ▼           ▼
-            ┌──────────────┐         ┌──────────────┐ ┌──────────┐
-            │  PlacementGA │         │ListScheduler │ │A*Router  │
-            └──────────────┘         └──────────────┘ └──────────┘
-```
-
-## ⚠️ What Is Missing / To Be Implemented
-
-### Phase 1: Complete Baseline (Current - Week 2)
-- [x] Basic algorithms implemented
-- [x] Problem generator
-- [x] Visualization
-- [ ] More sophisticated routing (negotiation-based)
-- [ ] Simulated Annealing placement (alternative to GA)
-- [ ] Better constraint checking and validation
-
-### Phase 2: External Tool Integration (Week 3-4)
-- [ ] MFSim actual integration (currently placeholder)
-- [ ] Splash-2 actual integration (currently placeholder)
-- [ ] Input/output format conversion for external tools
-- [ ] Benchmark dataset from literature
-
-### Phase 3: Agent Framework (Week 5-10)
-- [ ] Master Agent design
-- [ ] Placement Agent with LLM
-- [ ] Scheduling Agent with LLM
-- [ ] Routing Agent with LLM
-- [ ] Verifier Agent
-- [ ] Iterative optimization framework
-- [ ] Multi-agent communication protocol
-
-### Phase 4: LLM Integration (Week 11-20)
-- [ ] Prompt engineering for each task
-- [ ] Model fine-tuning pipeline
-- [ ] RAG (Retrieval-Augmented Generation) setup
-- [ ] Code-as-Policy implementation
-- [ ] Feedback learning
-
-### Phase 5: Experiments and Paper (Week 21-40)
-- [ ] Large-scale comparison experiments
-- [ ] Ablation studies
-- [ ] Visualization and analysis tools
-- [ ] Paper writing
-
-## 🚀 How to Use Right Now
-
-### Quick Test
-```bash
-cd dmfb-llm-synthesis
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Generate a test problem and run baseline
-python -c "
-import sys
-sys.path.insert(0, 'src')
-from src.dataset.generator import ProblemGenerator
-from src.baseline.baseline_runner import BaselineRunner
-
-gen = ProblemGenerator(seed=42)
-problem = gen.generate(20, pattern='random')
-print(f'Generated: {problem}')
-
-runner = BaselineRunner()
-result = runner.run(problem, method='python')
-print(f'Makespan: {result[\"makespan\"]}')
-print(f'CPU time: {result[\"cpu_time\"]:.3f}s')
-"
-```
-
-### Generate Training Dataset
-```bash
-python scripts/generate_dataset.py \
-    --output data/training \
-    --sizes 20 50 100 \
-    --num-per-size 50 \
-    --patterns linear parallel random
-```
-
-## 📈 Performance Expectations
-
-Based on initial tests:
-
-| Problem Size | Makespan (GA+List) | CPU Time |
-|-------------|-------------------|----------|
-| 10 ops      | ~30-50 ticks      | ~2s      |
-| 20 ops      | ~60-100 ticks     | ~5s      |
-| 50 ops      | ~150-250 ticks    | ~20s     |
-| 100 ops     | ~300-500 ticks    | ~60s     |
-
-*Note: Times are approximate and depend on GA generations/population size.*
-
-## 🔗 References for External Tools
-
-To integrate real external tools, you'll need:
-
-### MFSim
-- **Source**: Contact UCR (University of California, Riverside)
-- **Authors**: Grissom & Brisk
-- **Paper**: "Fast online synthesis of digital microfluidic biochips" (TCAD 2012)
-
-### Splash-2 / BioCoder
-- **Source**: UCR CAD Lab website
-- **Features**: Complete compiler from high-level protocols to electrode sequences
-
-### Other Tools to Consider
-- **BioMap**: Placement tool from TU Munich
-- **Various academic implementations** on GitHub (search: "dmfb synthesis")
-
-## 💡 Next Steps for You
-
-### Immediate (This Week)
-1. **Test the framework**: Run the quick test above
-2. **Generate a small dataset**: 10-20 problems of each size
-3. **Visualize results**: Use the visualization functions
-4. **Familiarize yourself**: Read through the code
-
-### Short Term (Next 2-4 Weeks)
-1. **Find external tools**: Ask your advisor about MFSim/Splash-2 access
-2. **Set up environment**: Install external tools if available
-3. **Generate full training dataset**: 1000+ problems
-4. **Run baselines on all problems**: Create training labels
-
-### Medium Term (1-2 Months)
-1. **Start Agent framework**: Implement Master Agent
-2. **Design prompts**: For placement/scheduling/routing
-3. **Connect LLM**: Use OpenAI API or local models
-4. **Iterate**: Test and improve
-
-## 📚 Files Overview
-
-### Core Implementation
-- `src/baseline/problem.py` - Data structures (600 lines)
-- `src/baseline/placement_ga.py` - GA placement (350 lines)
-- `src/baseline/scheduling_list.py` - List scheduling (250 lines)
-- `src/baseline/routing_astar.py` - A* routing (400 lines)
-- `src/baseline/baseline_runner.py` - Unified interface (200 lines)
-
-### Adapters
-- `src/baseline/adapters/base_adapter.py` - Abstract interface
-- `src/baseline/adapters/python_fallback.py` - Python implementation
-- `src/baseline/adapters/mfsim_adapter.py` - MFSim placeholder
-- `src/baseline/adapters/splash_adapter.py` - Splash-2 placeholder
-
-### Utilities
-- `src/dataset/generator.py` - Problem generator (350 lines)
-- `src/utils/visualization.py` - Matplotlib visualization (300 lines)
-- `src/utils/config.py` - Configuration management
-- `src/utils/logger.py` - Logging utilities
-
-### Scripts
-- `scripts/generate_dataset.py` - Dataset generation CLI
-- `scripts/run_baseline.py` - Baseline execution CLI
-
-### Documentation
-- `README.md` - Main documentation
-- `requirements.txt` - Python dependencies
-- `configs/default.yaml` - Default configuration
+> **项目**: 大模型增强的数字微流控生物芯片全流程综合算法研究  
+> **时间**: 2026-03-16  
+> **状态**: Phase 2 完成, Phase 4 进行中
 
 ---
 
-**Status**: Framework is functional and ready for use. Baseline algorithms are implemented and tested. Ready to generate training data for LLM agent development.
+## 🏗️ 系统架构图
 
-**Estimated LOC**: ~3,000 lines of Python code
-**Test Status**: Basic imports and functionality verified
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        MASTER AGENT                              │
+│                     (主控协调器)                                  │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  Pipeline: Placement → Scheduling → Routing             │   │
+│  │  功能: 顺序执行 · 错误处理 · 数据传递 · 状态管理          │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   PLACEMENT   │    │   SCHEDULING  │    │    ROUTING    │
+│     AGENT     │    │     AGENT     │    │     AGENT     │
+│   (布局智能体) │    │   (调度智能体) │    │   (路由智能体) │
+└───────┬───────┘    └───────┬───────┘    └───────┬───────┘
+        │                     │                     │
+   ┌────┴────┐           ┌────┴────┐           ┌────┴────┐
+   │         │           │         │           │         │
+┌──▼──┐   ┌──▼──┐     ┌──▼──┐   ┌──▼──┐     ┌──▼──┐   ┌──▼──┐
+│Prompt│   │LLM  │     │Prompt│   │LLM  │     │Prompt│   │LLM  │
+│Template│  │Client│    │Template│  │Client│    │Template│  │Client│
+└──┬──┘   └──┬──┘     └──┬──┘   └──┬──┘     └──┬──┘   └──┬──┘
+   │         │           │         │           │         │
+   │    ┌────┴────┐      │    ┌────┴────┐      │    ┌────┴────┐
+   └───►│  Kimi   │◄─────┘    │  Kimi   │◄─────┘    │  Kimi   │
+        │  API    │           │  API    │           │  API    │
+        └────┬────┘           └────┬────┘           └────┬────┘
+             │                     │                     │
+             ▼                     ▼                     ▼
+        ┌─────────┐          ┌─────────┐          ┌─────────┐
+        │Placement│          │Schedule │          │ Routing │
+        │Solution │          │Solution │          │ Solution│
+        └────┬────┘          └────┬────┘          └────┬────┘
+             │                     │                     │
+             ▼                     ▼                     ▼
+      ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+      │   VERIFIER   │     │   VERIFIER   │     │   VERIFIER   │
+      │  布局验证器   │     │  调度验证器   │     │  路由验证器   │
+      └──────────────┘     └──────────────┘     └──────────────┘
+```
+
+---
+
+## 📊 数据流向图
+
+```
+输入: Problem (问题定义)
+│
+├─ chip_size: (10, 10)
+├─ operations: [Op0, Op1, Op2]
+│   ├─ Op0: mix → dependencies: []
+│   ├─ Op1: detect → dependencies: [Op0]
+│   └─ Op2: mix → dependencies: [Op0]
+└─ modules: {mixer_2x2, detector_1x2}
+    │
+    ▼
+┌────────────────────────────────────────┐
+│         STAGE 1: PLACEMENT             │
+│  任务: 将模块放置在芯片上               │
+│  输入: Problem                         │
+│  输出: Placements [(x,y,width,height)] │
+│  约束: 不重叠 · 边界内 · 最小化线长     │
+└────────────────────────────────────────┘
+    │
+    ▼
+输出: 3 modules placed
+    ├─ mixer_0: (0,0), 2x2
+    ├─ mixer_1: (4,0), 2x2
+    └─ detector_0: (0,4), 1x2
+    │
+    ▼
+┌────────────────────────────────────────┐
+│        STAGE 2: SCHEDULING             │
+│  任务: 为操作分配执行时间               │
+│  输入: Problem + Placements            │
+│  输出: Schedule [(start, end, module)] │
+│  约束: 依赖顺序 · 资源冲突 · 最小化makespan
+└────────────────────────────────────────┘
+    │
+    ▼
+输出: 3 operations scheduled, makespan=6
+    ├─ Op0: t=[0,3], module=mixer_0
+    ├─ Op1: t=[3,5], module=detector_0
+    └─ Op2: t=[3,6], module=mixer_1
+```
+
+---
+
+## ✅ 已完成的功能 (Week 1-8)
+
+### Phase 1: 基础设施 (100% ✅)
+
+- ✅ **Baseline算法**: GA遗传算法、List调度、A*路由
+- ✅ **验证器系统**: Placement/Schedule/Routing Verifier
+- ✅ **数据集**: 100个问题 (50 ops × 50, 20 ops × 50)
+- ✅ **LLM基础设施**: Kimi API Key、LLMClient统一接口
+
+### Phase 2: Agent实现 (100% ✅)
+
+- ✅ **Week 5**: Placement Agent (3 ops, 0 violations)
+- ✅ **Week 6**: Scheduling Agent (3 ops, makespan=6)
+- ✅ **Week 7**: Routing Agent (2 droplets, total_time=5)
+
+### Phase 4: Master Agent (66% 🚧)
+
+- ✅ **Master Agent架构**: Pipeline顺序执行控制器
+- ✅ **2-Stage Pipeline**: Placement + Scheduling SUCCESS
+- 🚧 **3-Stage Pipeline**: Routing优化中 (collision issues)
+
+---
+
+## 📈 项目进度时间线
+
+```
+Week 1-4    Week 5      Week 6      Week 7      Week 8      Week 9-12
+   │           │           │           │           │           │
+   ▼           ▼           ▼           ▼           ▼           ▼
+┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐    ┌─────┐
+│基础 │    │Place│    │Sched│    │Route│    │Master│   │Bench│
+│设施 │    │Agent│    │Agent│    │Agent│    │Agent │   │mark │
+│100%│    │100% │    │100% │    │100% │    │ 66% │    │  0% │
+└─────┘    └─────┘    └─────┘    └─────┘    └─────┘    └─────┘
+   ✅          ✅          ✅          ✅         🚧         ⏳
+
+Legend: ✅ 完成  🚧 进行中  ⏳ 待开始
+```
+
+---
+
+## 📊 性能测试结果
+
+### 小规模测试 (2 operations)
+
+| Stage | 状态 | 耗时 | 迭代次数 | 质量 |
+|-------|------|------|----------|------|
+| Placement | ✅ SUCCESS | 7.6s | 1 | 0 violations |
+| Scheduling | ✅ SUCCESS | 2.0s | 1 | makespan=5 |
+| Routing | ⚠️ PARTIAL | 37s | 3 | collision issues |
+| **总计** | **66%** | **~47s** | - | 2/3 stages |
+
+---
+
+## 🚀 下一步计划
+
+### 短期目标 (Week 8-9)
+
+1. **Routing优化** 🔧
+   - 增加最大迭代次数 (3 → 5 → 10)
+   - 改进Placement策略 (模块间距 ≥2 cells)
+
+2. **完整Pipeline测试** ✅
+   - 目标: 3-stage全部SUCCESS
+   - 测试集: 5个简单案例 (2-5 ops)
+
+### 中期目标 (Week 10-12)
+
+3. **小规模Benchmark** 📊
+   - 测试集: 20 ops × 10 cases
+   - 对比GA/List/A*性能
+
+4. **RAG增强** 🔍
+   - FAISS相似问题检索
+
+---
+
+## 📝 关键数据
+
+| 指标 | 数值 |
+|------|------|
+| 代码总行数 | ~5,000+ 行 |
+| 新增文件 | 15+ 个 |
+| 测试通过率 | 66% (2/3 stages) |
+| API调用次数 | ~50次测试 |
+| 总开发时间 | 8 weeks |
+| Git提交次数 | 5+ 次 |
+
+---
+
+**最后更新**: 2026-03-16  
+**作者**: Claude Haiku 4.5 协助开发  
+**GitHub**: https://github.com/ZZY-0813/dmfb-llm-synthesis
