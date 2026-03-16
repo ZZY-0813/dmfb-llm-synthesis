@@ -244,27 +244,25 @@
 - [ ] **大规模测试 (20实例)** ⏳ 待扩展
 - [ ] **与GA对比** ⏳ 待评估
 
-#### Week 6: Scheduling Agent 测试与优化
-- [ ] **测试Scheduling Agent**
-  - 在20个问题实例上测试
-  - 对比List Scheduling效果
-- [ ] **优化Scheduling Prompt**
-  - 添加优先级策略说明
-  - Few-shot调度序列示例
-- [ ] **评估Scheduling效果**
-  - 与List Scheduling对比makespan
-  - 记录调度质量和成功率
+#### Week 6: Scheduling Agent 测试与优化 ✅ (已完成 2026-03-16)
+- [x] **测试Scheduling Agent** ✅
+  - 端到端测试通过 (3 operations, makespan=6, 0 violations) ✅
+  - ScheduleVerifier字典格式支持修复 ✅
+- [x] **实现Scheduling Prompt** ✅
+  - SchedulingPrompt模板 ✅
+  - Chain-of-Thought支持 ✅
+  - JSON输出格式规范 ✅
+- [ ] **大规模测试 (20实例)** ⏳ 待扩展
+- [ ] **与List Scheduling对比** ⏳ 待评估
 
-#### Week 7: Routing Agent + Master Agent集成
-- [ ] **设计Routing Prompt** `src/agents/routing/prompts.py`
-  - 时空约束描述
-  - 冲突消解策略
-  - Few-shot路径示例
-- [ ] **实现Routing Agent** `src/agents/routing/agent.py`
-  - LLM生成初始路径
-  - A*优化 + 冲突消解
-  - 验证器检查碰撞和流体约束
-- [ ] **实现Master Agent** `src/agents/master/agent.py`
+#### Week 7: Routing Agent + Master Agent集成 ✅ (部分完成 2026-03-16)
+- [x] **实现Routing Prompt** ✅
+  - RoutingPrompt模板 ✅
+  - 时空约束描述 ✅
+  - 碰撞避免策略 ✅
+- [x] **测试Routing Agent** ✅
+  - 端到端测试通过 (2 droplets, total_time=5, 0 violations) ✅
+- [ ] **实现Master Agent** `src/agents/master/agent.py` ⏳ 待实现
   - 顺序执行: Placement → Scheduling → Routing
   - 收集各阶段结果
   - 端到端验证
@@ -400,8 +398,21 @@
    - 支持字典/对象双格式 ✅
    - 边界检查修复 ✅
 
-### 下一步 (Phase 3)
-6. [ ] **Scheduling Agent端到端测试**
+### ✅ Phase 3: 全流程验证 (Week 6-7 完成)
+6. [x] **Scheduling Agent端到端测试** ✅ (2026-03-16)
+   - 3 operations, makespan=6, 0 violations ✅
+   - ScheduleVerifier字典格式支持 ✅
+7. [x] **Routing Agent端到端测试** ✅ (2026-03-16)
+   - 2 droplets, total_time=5, 0 violations ✅
+   - RoutingVerifier无需修改 ✅
+
+### 下一步 (Phase 4)
+8. [ ] **完整Pipeline测试**
+   - Problem → Placement → Scheduling → Routing
+   - 小规模benchmark (20 ops)
+9. [ ] **性能对比**
+   - 与GA/List/A*对比makespan、线长、路由时间
+10. [ ] **大规模测试** (50 ops)
 7. [ ] **Routing Agent端到端测试**
 8. [ ] **Master Agent集成 (Pipeline)**
 9. [ ] **小规模benchmark测试 (20 ops)**

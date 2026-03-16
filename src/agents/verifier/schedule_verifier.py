@@ -86,7 +86,7 @@ class ScheduleVerifier(BaseVerifier):
         # 1. 检查依赖约束
         dependency_violations = self._check_dependencies(problem, op_schedule)
         violations.extend(dependency_violations)
-        stats["dependency_checks"] = len(problem.operations)
+        stats["dependency_checks"] = len(problem.get('operations', []) if isinstance(problem, dict) else problem.operations)
 
         # 2. 检查资源约束
         resource_violations = self._check_resource_conflicts(op_schedule)
@@ -103,8 +103,11 @@ class ScheduleVerifier(BaseVerifier):
         """检查依赖约束：前驱操作必须在当前操作开始前完成"""
         violations = []
 
-        # 构建操作ID到对象的映射
-        op_map = {op.id: op for op in problem.operations}
+        # 构建操作ID到对象的映射（支持对象或字典）
+        if isinstance(problem, dict):
+            op_map = {op['id']: op for op in problem.get('operations', [])}
+        else:
+            op_map = {op.id: op for op in problem.operations}
 
         for op_id, sched in op_schedule.items():
             if op_id not in op_map:
@@ -120,8 +123,14 @@ class ScheduleVerifier(BaseVerifier):
             op = op_map[op_id]
             current_start = sched["start"]
 
+            # 获取依赖（支持对象或字典）
+            if isinstance(op, dict):
+                deps = op.get('dependencies', [])
+            else:
+                deps = op.dependencies
+
             # 检查所有前驱
-            for pred_id in op.dependencies:
+            for pred_id in deps:
                 if pred_id not in op_schedule:
                     violations.append(Violation(
                         violation_type=ViolationType.DEPENDENCY_VIOLATION,
@@ -206,10 +215,13 @@ class ScheduleVerifier(BaseVerifier):
         """检查时序约束：持续时间是否合理"""
         violations = []
 
-        # 获取模块库
-        modules = problem.modules if hasattr(problem, 'modules') else {}
-
-        op_map = {op.id: op for op in problem.operations}
+        # 获取模块库（支持对象或字典）
+        if isinstance(problem, dict):
+            modules = problem.get('modules', {})
+            op_map = {op['id']: op for op in problem.get('operations', [])}
+        else:
+            modules = problem.modules if hasattr(problem, 'modules') else {}
+            op_map = {op.id: op for op in problem.operations}
 
         for op_id, sched in op_schedule.items():
             start = sched["start"]
