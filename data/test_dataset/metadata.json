@@ -1,0 +1,32 @@
+{
+  "statistics": {
+    "total_problems": 4,
+    "by_size": {
+      "small": 2,
+      "large": 2
+    },
+    "files": [
+      "data\\test_dataset\\problems_small.json",
+      "data\\test_dataset\\problems_large.json"
+    ]
+  },
+  "config": {
+    "small_ops": 20,
+    "large_ops": 50,
+    "count_per_size": 2,
+    "chip_sizes": [
+      [
+        16,
+        16
+      ],
+      [
+        20,
+        20
+      ],
+      [
+        24,
+        24
+      ]
+    ]
+  }
+}

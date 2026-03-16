@@ -97,12 +97,23 @@ class LLMClient:
 
     @classmethod
     def from_kimi(cls, api_key: str, model: str = "moonshot-v1-8k") -> "LLMClient":
-        """Create a Kimi client."""
+        """Create a Kimi client (Moonshot AI)."""
         config = LLMConfig(
             provider=LLMProvider.KIMI,
             api_key=api_key,
             model=model,
             base_url="https://api.moonshot.cn/v1"
+        )
+        return cls(config)
+
+    @classmethod
+    def from_kimi_coding(cls, api_key: str, model: str = "kimi-coding") -> "LLMClient":
+        """Create a Kimi For Coding client."""
+        config = LLMConfig(
+            provider=LLMProvider.KIMI,
+            api_key=api_key,
+            model=model,
+            base_url="https://api.kimi.com/coding"
         )
         return cls(config)
 

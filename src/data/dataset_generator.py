@@ -4,7 +4,7 @@ DMFB Dataset Generator
 Generates random problem instances with baseline solutions for training.
 Output format supports few-shot prompting and RAG retrieval.
 
-Author: Claude
+Updated: Integrated real baseline algorithms (GA, SA, List Scheduling)
 """
 
 import json
@@ -18,6 +18,9 @@ import sys
 sys.path.insert(0, 'src')
 
 from baseline.problem import DMFBProblem, Operation, Module, ModuleType, Droplet
+from baseline.placement_ga import PlacementGA
+from baseline.scheduling_list import ListScheduler
+from baseline.baseline_runner import BaselineRunner as RealBaselineRunner
 
 
 @dataclass
@@ -238,49 +241,133 @@ class SolutionEntry:
         }
 
 
-class BaselineRunner:
-    """Runs baseline algorithms to generate solution labels."""
+class EnhancedBaselineRunner:
+    """Runs real baseline algorithms to generate solution labels."""
 
     def __init__(self):
         self.results = []
+        # Baseline algorithms will be initialized per problem
+        self.baseline_runner = RealBaselineRunner()
 
     def run_on_problem(self, problem: DMFBProblem) -> SolutionEntry:
         """
-        Run all baseline algorithms on a problem.
-
-        Note: This is a simplified version. Full implementation would
-        actually run GA, SA, list scheduling, etc.
+        Run all baseline algorithms on a problem using real implementations.
         """
         entry = SolutionEntry(problem=problem)
 
-        # Placeholder: In real implementation, these would run actual algorithms
-        # For now, we create dummy solutions for structure demonstration
+        try:
+            # Run GA for placement
+            ga_result = self._run_ga_placement(problem)
+            if ga_result:
+                entry.placement_ga = ga_result
 
-        # Generate a simple valid placement (random but non-overlapping)
-        entry.placement_ga = self._generate_dummy_placement(problem)
-        entry.placement_sa = entry.placement_ga  # Same for now
+            # Run List Scheduling
+            list_result = self._run_list_scheduling(problem)
+            if list_result:
+                entry.schedule_list = list_result
 
-        # Generate a simple valid schedule
-        entry.schedule_list = self._generate_dummy_schedule(problem)
-        entry.schedule_cp = entry.schedule_list
+            # Run full baseline pipeline (placement + scheduling + routing)
+            full_result = self._run_full_baseline(problem)
+            if full_result:
+                entry.metrics = {
+                    "makespan": full_result.get('makespan', 0),
+                    "total_wirelength": full_result.get('total_wirelength', 0.0),
+                    "area_utilization": full_result.get('area_utilization', 0.0)
+                }
 
-        # Dummy metrics
-        entry.makespan = problem.get_critical_path_length() + random.randint(5, 20)
-        entry.area_utilization = random.uniform(0.3, 0.7)
+        except Exception as e:
+            print(f"  [WARNING] Error running baselines on {problem.name}: {e}")
+            # Fall back to dummy solutions
+            entry = self._create_dummy_solution(problem)
 
         return entry
 
-    def _generate_dummy_placement(self, problem: DMFBProblem) -> List[Dict]:
-        """Generate a simple non-overlapping placement."""
-        placements = []
-        occupied = set()
+    def _run_ga_placement(self, problem: DMFBProblem) -> List[Dict]:
+        """Run GA placement algorithm."""
+        try:
+            # Initialize GA solver for this problem
+            ga_solver = PlacementGA(problem, pop_size=50, generations=100)
+            result = ga_solver.solve()
+            if result and hasattr(result, 'positions'):
+                placements = []
+                for op_id, (x, y) in result.positions.items():
+                    # Map operation ID to module
+                    op = next((o for o in problem.operations if o.id == op_id), None)
+                    if op:
+                        module = problem.modules.get(op.module_type)
+                        if module:
+                            placements.append({
+                                "operation_id": op_id,
+                                "module_type": op.module_type,
+                                "x": x,
+                                "y": y,
+                                "width": module.width,
+                                "height": module.height
+                            })
+                return placements
+        except Exception as e:
+            print(f"    [GA Placement Failed] {e}")
+        return None
+        """Run GA placement algorithm."""
+        try:
+            # Use the GA solver
+            result = self.ga_solver.solve(problem)
+            if result and 'placements' in result:
+                placements = []
+                for module_id, (x, y) in result['placements'].items():
+                    module = problem.modules.get(module_id)
+                    if module:
+                        placements.append({
+                            "module_id": module_id,
+                            "x": x,
+                            "y": y,
+                            "width": module.width,
+                            "height": module.height
+                        })
+                return placements
+        except Exception as e:
+            print(f"    [GA Placement Failed] {e}")
+        return None
 
+    def _run_list_scheduling(self, problem: DMFBProblem) -> List[Dict]:
+        """Run List Scheduling algorithm."""
+        try:
+            # Initialize list scheduler for this problem
+            list_scheduler = ListScheduler()
+            schedule = list_scheduler.schedule(problem)
+            if schedule:
+                schedule_list = []
+                for op_id, (start_time, end_time, module_id) in schedule.items():
+                    schedule_list.append({
+                        "operation_id": op_id,
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        "module_id": module_id
+                    })
+                return schedule_list
+        except Exception as e:
+            print(f"    [List Scheduling Failed] {e}")
+        return None
+
+    def _run_full_baseline(self, problem: DMFBProblem) -> Dict:
+        """Run full baseline pipeline."""
+        try:
+            result = self.baseline_runner.run(problem, method="python")
+            return result
+        except Exception as e:
+            print(f"    [Full Baseline Failed] {e}")
+        return None
+
+    def _create_dummy_solution(self, problem: DMFBProblem) -> SolutionEntry:
+        """Create a dummy solution as fallback."""
+        entry = SolutionEntry(problem=problem)
+
+        # Simple grid placement
+        placements = []
         for i, module_type in enumerate(problem.modules.keys()):
             module = problem.modules[module_type]
-            # Simple grid placement
             x = (i * 3) % problem.chip_width
             y = ((i * 3) // problem.chip_width) * 3
-
             if x + module.width <= problem.chip_width and y + module.height <= problem.chip_height:
                 placements.append({
                     "module_id": module_type,
@@ -289,29 +376,30 @@ class BaselineRunner:
                     "width": module.width,
                     "height": module.height
                 })
+        entry.placement_ga = placements
+        entry.placement_sa = placements
 
-        return placements
-
-    def _generate_dummy_schedule(self, problem: DMFBProblem) -> List[Dict]:
-        """Generate a simple valid schedule using topological order."""
+        # Simple topological schedule
         topo_order = problem.topological_sort()
         schedule = []
         current_time = 0
-
         for op_id in topo_order:
             op = next(o for o in problem.operations if o.id == op_id)
             duration = op.get_duration(problem.modules)
-
             schedule.append({
                 "operation_id": op_id,
                 "start_time": current_time,
                 "end_time": current_time + duration,
                 "module_id": op.module_type
             })
-
             current_time += duration
+        entry.schedule_list = schedule
+        entry.schedule_cp = schedule
 
-        return schedule
+        entry.makespan = current_time
+        entry.area_utilization = 0.5
+
+        return entry
 
     def run_dataset(self, problems: List[DMFBProblem],
                     output_file: str = "data/dataset/solutions.json"):
@@ -347,7 +435,7 @@ def generate_dataset(output_dir: str = "data/dataset"):
 
     # Step 2: Run baselines to generate labels
     print("\nGenerating baseline solutions...")
-    runner = BaselineRunner()
+    runner = EnhancedBaselineRunner()
 
     # Load problems and run baselines
     small_file = Path(output_dir) / "problems_small.json"

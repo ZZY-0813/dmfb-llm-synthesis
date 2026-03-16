@@ -154,9 +154,13 @@ class PlacementVerifier(BaseVerifier):
         """检查模块是否在芯片边界内"""
         violations = []
 
-        # 获取芯片尺寸
-        chip_width = getattr(problem, 'chip_width', 10)
-        chip_height = getattr(problem, 'chip_height', 10)
+        # 获取芯片尺寸（支持对象或字典）
+        if isinstance(problem, dict):
+            chip_width = problem.get('chip_width', 10)
+            chip_height = problem.get('chip_height', 10)
+        else:
+            chip_width = getattr(problem, 'chip_width', 10)
+            chip_height = getattr(problem, 'chip_height', 10)
 
         for module in modules:
             errors = []
