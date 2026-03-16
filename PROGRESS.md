@@ -268,14 +268,20 @@
   - 端到端验证
   - 错误反馈与重试（最多2轮完整迭代）
 
-#### Week 8: 优化与评估
-- [ ] **RAG增强（轻量级）** `src/agents/rag/`
-  - 使用FAISS检索相似问题
-  - 动态添加few-shot示例
-- [ ] **评估完整pipeline**
-  - 与分层baseline对比
-  - 分析各阶段贡献
-  - 全流程成功率统计
+#### Week 8: Master Agent集成 ✅ (部分完成 2026-03-16)
+- [x] **Master Agent实现** ✅
+  - Pipeline顺序执行框架 ✅
+  - Placement → Scheduling → Routing ✅
+  - 跨阶段数据传递 ✅
+  - AgentContext适配 ✅
+- [x] **2-Stage Pipeline测试** ✅
+  - Placement + Scheduling: SUCCESS ✅
+  - 2 operations, makespan=5 ✅
+- [ ] **Routing优化** ⏳ 进行中
+  - 当前: 3 iterations, 需要增加
+  - 液滴碰撞问题需解决
+- [ ] **RAG增强（轻量级）** ⏳ 待开始
+- [ ] **评估完整pipeline** ⏳ 待开始
 
 **交付物**:
 - `src/agents/` 完整代码（Placement + Scheduling + Routing + Master）
@@ -406,16 +412,26 @@
    - 2 droplets, total_time=5, 0 violations ✅
    - RoutingVerifier无需修改 ✅
 
-### 下一步 (Phase 4)
-8. [ ] **完整Pipeline测试**
-   - Problem → Placement → Scheduling → Routing
-   - 小规模benchmark (20 ops)
-9. [ ] **性能对比**
-   - 与GA/List/A*对比makespan、线长、路由时间
-10. [ ] **大规模测试** (50 ops)
-7. [ ] **Routing Agent端到端测试**
-8. [ ] **Master Agent集成 (Pipeline)**
-9. [ ] **小规模benchmark测试 (20 ops)**
+### ✅ Phase 4: 全流程集成 (Week 8 部分完成)
+8. [x] **Master Agent集成** ✅ (2026-03-16)
+   - Pipeline顺序执行: Placement → Scheduling → Routing ✅
+   - MasterContext状态管理 ✅
+   - 跨阶段数据传递 ✅
+   - 错误处理和恢复 ✅
+9. [x] **2-Stage Pipeline测试** ✅ (2026-03-16)
+   - Placement + Scheduling: **SUCCESS** ✅
+   - 2 operations, makespan=5, 0 violations ✅
+   - Total time: ~9.5s ✅
+   - Routing: Partial (needs more iterations) ⏳
+
+### 下一步 (Phase 4 继续)
+10. [ ] **Routing优化**
+    - 增加迭代次数 (5→10)
+    - 改进初始placement策略 (模块间距)
+11. [ ] **3-Stage完整Pipeline**
+    - 实现端到端Routing成功
+12. [ ] **小规模Benchmark (20 ops)**
+    - 对比GA/List/A*性能
 
 **当前目标**: 完成全流程集成测试，准备基准测试
 
